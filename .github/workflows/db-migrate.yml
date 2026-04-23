@@ -1,0 +1,52 @@
+name: DB Migrate (Production)
+
+# Drizzle 마이그레이션을 프로덕션 Supabase DB에 적용합니다.
+# 사람이 로컬에서 원격 DB로 직접 migrate를 쏘지 않고, 이 워크플로우에만 권한을 줍니다.
+#
+# 필수 설정 (1회만 수행):
+#   GitHub 저장소 → Settings → Environments → "production" 생성
+#     └─ Secrets → Add secret
+#         이름: PRODUCTION_DATABASE_URL
+#         값 : Supabase Dashboard → Settings → Database → Connection string
+#              의 "Session" 또는 "Direct connection" (port 5432) 문자열
+#     ※ Transaction pooler(6543) 문자열을 넣으면 prepared statement 충돌로 실패합니다.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "drizzle/**"
+      - "lib/db/schema.ts"
+      - "drizzle.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/db-migrate.yml"
+  workflow_dispatch: # Actions 탭에서 수동 실행 가능
+
+jobs:
+  migrate:
+    name: drizzle-kit migrate
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    concurrency:
+      group: db-migrate-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply Drizzle migrations
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        run: npx drizzle-kit migrate
