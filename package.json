@@ -1,0 +1,35 @@
+{
+  "name": "claude-vercel-wbs",
+  "version": "1.0.0",
+  "description": "Claude Code만으로 WBS(Work Breakdown Structure) 프로젝트 매니지먼트 웹앱을 만들고, Vercel에 배포해 공개 URL을 획득해보는 풀스택 과제입니다. 직접 타이핑은 최소한으로만 하고, 대부분의 구현은 Claude Code에게 지시해서 진행합니다.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.35.0",
+    "@emotion/react": "^11.14.0",
+    "@supabase/supabase-js": "^2.104.1",
+    "drizzle-orm": "^0.45.2",
+    "next": "^14.2.35",
+    "postgres": "^3.4.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
+    "typescript": "^5.9.3"
+  }
+}
