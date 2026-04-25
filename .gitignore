@@ -9,6 +9,8 @@ out/
 build/
 dist/
 *.tsbuildinfo
+# next-env.d.ts: Next.js가 빌드 시 자동 재생성. 추적하지 않는 게 표준.
+next-env.d.ts
 
 # ── Environment (never commit) ────────────────────────────
 # CLAUDE.md §10 참조: .env.local 은 supabase status / vercel env 로부터 재생성.
@@ -44,6 +46,9 @@ supabase/.branches/
 # ── Drizzle 런타임 (생성 마이그레이션·메타는 커밋) ───────────
 # drizzle/ 디렉토리 자체는 추적. drizzle-kit studio 등의 캐시만 제외.
 drizzle/.cache/
+
+# ── Playwright MCP 임시 캐시 (스냅샷·콘솔 로그) ─────────────
+.playwright-mcp/
 
 # ── IDE / Editor ──────────────────────────────────────────
 .vscode/
