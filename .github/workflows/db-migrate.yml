@@ -18,8 +18,6 @@ on:
       - "drizzle/**"
       - "lib/db/schema.ts"
       - "drizzle.config.ts"
-      - "package.json"
-      - "package-lock.json"
       - ".github/workflows/db-migrate.yml"
   workflow_dispatch: # Actions 탭에서 수동 실행 가능
 
