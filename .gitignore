@@ -45,6 +45,9 @@ supabase/.branches/
 # drizzle/ 디렉토리 자체는 추적. drizzle-kit studio 등의 캐시만 제외.
 drizzle/.cache/
 
+# ── Playwright MCP 임시 캐시 (스냅샷·콘솔 로그) ─────────────
+.playwright-mcp/
+
 # ── IDE / Editor ──────────────────────────────────────────
 .vscode/
 .idea/
