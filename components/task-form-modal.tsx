@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState, useTransition } from 'react';
 import { createTask, updateTask } from '@/lib/actions/tasks';
-import { validateTaskInput, type TaskInput, type ValidationError } from '@/lib/validation/task';
+import { clampProgress, validateTaskInput, type TaskInput, type ValidationError } from '@/lib/validation/task';
 import type { Task } from '@/lib/db/schema';
 
 type Props = {
@@ -156,6 +156,7 @@ export function TaskFormModal({ open, onOpenChange, task, initialParentId, paren
                       max={100}
                       value={progress}
                       onChange={(e) => setProgress(e.target.value)}
+                      onBlur={() => setProgress(String(clampProgress(Number.parseInt(progress, 10))))}
                     />
                     {errorOf('progress') && <Field.ErrorText>{errorOf('progress')}</Field.ErrorText>}
                   </Field.Root>

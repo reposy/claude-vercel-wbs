@@ -72,3 +72,10 @@ export function nextStatus(current: string): TaskStatus {
   if (idx === -1) return 'todo';
   return TASK_STATUSES[(idx + 1) % TASK_STATUSES.length];
 }
+
+export function clampProgress(n: number): number {
+  if (!Number.isFinite(n)) return 0;
+  if (n < 0) return 0;
+  if (n > 100) return 100;
+  return Math.trunc(n);
+}
