@@ -47,7 +47,7 @@ export function TaskList({ tasks, childCounts }: Props) {
   );
 
   return (
-    <Box maxW="6xl" mx="auto" p="6">
+    <Box maxW={{ base: 'full', '2xl': '1600px' }} mx="auto" px={{ base: '4', md: '6' }} py="6">
       <HStack justify="space-between" mb="6">
         <Heading size="lg">WBS</Heading>
         {tasks.length > 0 && addButton}

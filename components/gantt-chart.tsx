@@ -70,7 +70,7 @@ export function GanttChart({ tasks }: Props) {
   );
 
   return (
-    <Box maxW="6xl" mx="auto" p="6">
+    <Box maxW={{ base: 'full', '2xl': '1600px' }} mx="auto" px={{ base: '4', md: '6' }} py="6">
       <Heading size="lg" mb="6">
         WBS · 간트
       </Heading>
