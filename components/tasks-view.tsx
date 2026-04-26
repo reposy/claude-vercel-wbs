@@ -18,7 +18,7 @@ export function TasksView({ tasks, childCounts }: Props) {
 
   return (
     <Box>
-      <HStack maxW="6xl" mx="auto" px="6" pt="6" gap="2">
+      <HStack maxW={{ base: 'full', '2xl': '1600px' }} mx="auto" px={{ base: '4', md: '6' }} pt="6" gap="2">
         <Button
           size="sm"
           variant={view === 'list' ? 'solid' : 'outline'}
