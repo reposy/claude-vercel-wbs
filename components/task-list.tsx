@@ -5,37 +5,13 @@ import { useMemo, useState } from 'react';
 import { EmptyState } from './empty-state';
 import { TaskFormModal } from './task-form-modal';
 import { TaskRow } from './task-row';
+import { flattenTree } from '@/lib/tasks/tree';
 import type { Task } from '@/lib/db/schema';
 
 type Props = {
   tasks: Task[];
   childCounts: Record<string, number>;
 };
-
-type FlatNode = { task: Task; depth: number };
-
-function flattenTree(tasks: Task[], collapsedIds: Set<string>): FlatNode[] {
-  const childrenByParent = new Map<string | null, Task[]>();
-  for (const t of tasks) {
-    const key = t.parentId;
-    const list = childrenByParent.get(key) ?? [];
-    list.push(t);
-    childrenByParent.set(key, list);
-  }
-
-  const result: FlatNode[] = [];
-  function visit(parentId: string | null, depth: number) {
-    const children = childrenByParent.get(parentId) ?? [];
-    for (const child of children) {
-      result.push({ task: child, depth });
-      if (!collapsedIds.has(child.id)) {
-        visit(child.id, depth + 1);
-      }
-    }
-  }
-  visit(null, 0);
-  return result;
-}
 
 export function TaskList({ tasks, childCounts }: Props) {
   const [createOpen, setCreateOpen] = useState(false);

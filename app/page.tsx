@@ -1,7 +1,7 @@
 import { asc, count, isNotNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { tasks } from '@/lib/db/schema';
-import { TaskList } from '@/components/task-list';
+import { TasksView } from '@/components/tasks-view';
 
 export default async function Page() {
   const allTasks = await db.select().from(tasks).orderBy(asc(tasks.createdAt));
@@ -16,5 +16,5 @@ export default async function Page() {
     if (row.parentId) childCounts[row.parentId] = Number(row.n);
   }
 
-  return <TaskList tasks={allTasks} childCounts={childCounts} />;
+  return <TasksView tasks={allTasks} childCounts={childCounts} />;
 }
