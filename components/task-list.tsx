@@ -11,9 +11,10 @@ import type { Task } from '@/lib/db/schema';
 type Props = {
   tasks: Task[];
   childCounts: Record<string, number>;
+  today: string;
 };
 
-export function TaskList({ tasks, childCounts }: Props) {
+export function TaskList({ tasks, childCounts, today }: Props) {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<string | null>(null);
@@ -63,6 +64,7 @@ export function TaskList({ tasks, childCounts }: Props) {
               task={task}
               childCount={childCounts[task.id] ?? 0}
               depth={depth}
+              today={today}
               isExpanded={!collapsedIds.has(task.id)}
               onToggleExpanded={toggleExpanded}
               onEditClick={() => setEditingId(task.id)}

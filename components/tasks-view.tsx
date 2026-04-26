@@ -1,9 +1,10 @@
 'use client';
 
 import { Box, Button, HStack } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GanttChart } from './gantt-chart';
 import { TaskList } from './task-list';
+import { todayIso } from '@/lib/gantt/dates';
 import type { Task } from '@/lib/db/schema';
 
 type View = 'list' | 'gantt';
@@ -15,6 +16,8 @@ type Props = {
 
 export function TasksView({ tasks, childCounts }: Props) {
   const [view, setView] = useState<View>('list');
+  // 사용자 로컬 기준 "오늘". 목록·간트 양쪽 Overdue 판정과 간트 오늘선이 같은 값을 공유한다.
+  const today = useMemo(() => todayIso(), []);
 
   return (
     <Box>
@@ -37,9 +40,9 @@ export function TasksView({ tasks, childCounts }: Props) {
         </Button>
       </HStack>
       {view === 'list' ? (
-        <TaskList tasks={tasks} childCounts={childCounts} />
+        <TaskList tasks={tasks} childCounts={childCounts} today={today} />
       ) : (
-        <GanttChart tasks={tasks} />
+        <GanttChart tasks={tasks} today={today} />
       )}
     </Box>
   );

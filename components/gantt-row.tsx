@@ -2,6 +2,7 @@
 
 import { Box, HStack } from '@chakra-ui/react';
 import { daysBetween, xForDate } from '@/lib/gantt/dates';
+import { isOverdue } from '@/lib/tasks/overdue';
 import type { Task } from '@/lib/db/schema';
 
 const STATUS_BAR_DARK: Record<string, string> = {
@@ -24,6 +25,7 @@ type Props = {
   leftWidth: number;
   rightWidth: number;
   rowHeight: number;
+  today: string;
 };
 
 export function GanttRow({
@@ -34,10 +36,12 @@ export function GanttRow({
   leftWidth,
   rightWidth,
   rowHeight,
+  today,
 }: Props) {
   const hasSchedule = task.startDate !== null && task.dueDate !== null;
   const dark = STATUS_BAR_DARK[task.status] ?? 'gray.500';
   const light = STATUS_BAR_LIGHT[task.status] ?? 'gray.200';
+  const overdue = isOverdue(task, today);
 
   let bar: { x: number; width: number } | null = null;
   if (hasSchedule) {
@@ -92,6 +96,9 @@ export function GanttRow({
             height="20px"
             bg={light}
             borderRadius="sm"
+            outlineWidth={overdue ? '2px' : undefined}
+            outlineStyle={overdue ? 'dashed' : undefined}
+            outlineColor={overdue ? 'red.500' : undefined}
             draggable={false}
             userSelect="none"
             cursor="default"
