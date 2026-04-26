@@ -4,12 +4,16 @@ import { Box, HStack, IconButton, Menu, Portal, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import { StatusBadge } from './status-badge';
 import { TaskDeleteDialog } from './task-delete-dialog';
-import { TaskFormModal } from './task-form-modal';
 import type { Task } from '@/lib/db/schema';
 
 type Props = {
   task: Task;
   childCount: number;
+  depth: number;
+  isExpanded: boolean;
+  onToggleExpanded: (id: string) => void;
+  onEditClick: () => void;
+  onAddChildClick: () => void;
 };
 
 function formatDateRange(startDate: string | null, dueDate: string | null) {
@@ -17,23 +21,48 @@ function formatDateRange(startDate: string | null, dueDate: string | null) {
   return `${startDate ?? '—'} ~ ${dueDate ?? '—'}`;
 }
 
-export function TaskRow({ task, childCount }: Props) {
-  const [editOpen, setEditOpen] = useState(false);
+export function TaskRow({
+  task,
+  childCount,
+  depth,
+  isExpanded,
+  onToggleExpanded,
+  onEditClick,
+  onAddChildClick,
+}: Props) {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const hasChildren = childCount > 0;
 
   return (
     <>
       <Box
         borderWidth="1px"
         borderRadius="md"
-        p="3"
+        py="3"
+        pr="3"
+        pl={`${12 + depth * 24}px`}
         cursor="pointer"
         _hover={{ bg: 'bg.muted' }}
-        onClick={() => setEditOpen(true)}
+        onClick={onEditClick}
         role="button"
         aria-label={`작업 ${task.title} 편집`}
       >
         <HStack gap="4">
+          <Box w="24px" flexShrink={0} display="flex" alignItems="center" justifyContent="center">
+            {hasChildren ? (
+              <IconButton
+                aria-label={isExpanded ? '하위 작업 접기' : '하위 작업 펼치기'}
+                variant="ghost"
+                size="xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleExpanded(task.id);
+                }}
+              >
+                {isExpanded ? '▼' : '▶'}
+              </IconButton>
+            ) : null}
+          </Box>
           <Box flex="1" minW="0">
             <Text fontWeight="medium" truncate>
               {task.title}
@@ -81,6 +110,15 @@ export function TaskRow({ task, childCount }: Props) {
                 <Menu.Positioner>
                   <Menu.Content onClick={(e) => e.stopPropagation()}>
                     <Menu.Item
+                      value="add-child"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddChildClick();
+                      }}
+                    >
+                      하위 작업 추가
+                    </Menu.Item>
+                    <Menu.Item
                       value="delete"
                       color="fg.error"
                       onClick={(e) => {
@@ -98,9 +136,6 @@ export function TaskRow({ task, childCount }: Props) {
         </HStack>
       </Box>
 
-      {/* Dialog는 항상 mount — open prop으로 visibility 제어. 조건부 mount 시
-          Chakra v3 Dialog의 body scroll-lock cleanup이 우회되어 pointer-events:none이 영구 잔류함. */}
-      <TaskFormModal task={task} open={editOpen} onOpenChange={setEditOpen} />
       <TaskDeleteDialog
         task={task}
         childCount={childCount}

@@ -10,6 +10,7 @@ import {
   NativeSelect,
   Portal,
   Stack,
+  Text,
   Textarea,
 } from '@chakra-ui/react';
 import { useEffect, useState, useTransition } from 'react';
@@ -21,9 +22,11 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   task?: Task;
+  initialParentId?: string | null;
+  parentTitle?: string;
 };
 
-export function TaskFormModal({ open, onOpenChange, task }: Props) {
+export function TaskFormModal({ open, onOpenChange, task, initialParentId, parentTitle }: Props) {
   const isEdit = !!task;
   const [title, setTitle] = useState(task?.title ?? '');
   const [description, setDescription] = useState(task?.description ?? '');
@@ -35,9 +38,10 @@ export function TaskFormModal({ open, onOpenChange, task }: Props) {
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  // open이 false→true로 갈 때 폼 상태를 task prop으로 reset.
+  // open이 false→true로 가거나 모달이 다른 task로 reuse될 때 폼 상태를 reset.
   // Why: Dialog.Root는 항상 mount된 상태로 두어야 Chakra가 body의 scroll-lock cleanup을 정상 실행함
   // (조건부 mount는 cleanup useEffect 우회 → body에 pointer-events:none 영구 잔류 → 행 클릭 죽음).
+  // 또한 모달이 페이지 단위로 hoist되어 여러 task에 reuse되므로 task?.id / initialParentId 변경 시도 reset.
   useEffect(() => {
     if (!open) return;
     setTitle(task?.title ?? '');
@@ -48,9 +52,8 @@ export function TaskFormModal({ open, onOpenChange, task }: Props) {
     setStartDate(task?.startDate ?? '');
     setDueDate(task?.dueDate ?? '');
     setErrors([]);
-    // task 객체는 row마다 안정적이라 deps에 넣어도 됨. open 전이만으로 reset 충분.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, task?.id, initialParentId]);
 
   const errorOf = (field: ValidationError['field']) => errors.find((e) => e.field === field)?.message;
 
@@ -64,7 +67,7 @@ export function TaskFormModal({ open, onOpenChange, task }: Props) {
       progress: Number.parseInt(progress, 10) || 0,
       startDate: startDate || null,
       dueDate: dueDate || null,
-      parentId: task?.parentId ?? null,
+      parentId: task?.parentId ?? initialParentId ?? null,
     };
     const localErrors = validateTaskInput(input, { selfId: task?.id });
     if (localErrors.length) {
@@ -103,6 +106,15 @@ export function TaskFormModal({ open, onOpenChange, task }: Props) {
                         <Alert.Description>{errorOf('general')}</Alert.Description>
                       </Alert.Content>
                     </Alert.Root>
+                  )}
+
+                  {parentTitle && (task?.parentId || initialParentId) && (
+                    <Text fontSize="sm" color="fg.muted">
+                      상위 작업:{' '}
+                      <Text as="span" fontWeight="medium" color="fg">
+                        {parentTitle}
+                      </Text>
+                    </Text>
                   )}
 
                   <Field.Root invalid={!!errorOf('title')} required>
