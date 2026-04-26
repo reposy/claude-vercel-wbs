@@ -1,15 +1,17 @@
 'use client';
 
-import { Box, HStack, IconButton, Menu, Portal, Text } from '@chakra-ui/react';
+import { Badge, Box, HStack, IconButton, Menu, Portal, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import { StatusBadge } from './status-badge';
 import { TaskDeleteDialog } from './task-delete-dialog';
+import { isOverdue } from '@/lib/tasks/overdue';
 import type { Task } from '@/lib/db/schema';
 
 type Props = {
   task: Task;
   childCount: number;
   depth: number;
+  today: string;
   isExpanded: boolean;
   onToggleExpanded: (id: string) => void;
   onEditClick: () => void;
@@ -25,6 +27,7 @@ export function TaskRow({
   task,
   childCount,
   depth,
+  today,
   isExpanded,
   onToggleExpanded,
   onEditClick,
@@ -32,6 +35,7 @@ export function TaskRow({
 }: Props) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const hasChildren = childCount > 0;
+  const overdue = isOverdue(task, today);
 
   return (
     <>
@@ -92,7 +96,16 @@ export function TaskRow({
             </HStack>
           </Box>
           <Box w="200px" textAlign="right">
-            <Text fontSize="sm">{formatDateRange(task.startDate, task.dueDate)}</Text>
+            <HStack gap="2" justify="flex-end">
+              <Text fontSize="sm" color={overdue ? 'red.500' : undefined}>
+                {formatDateRange(task.startDate, task.dueDate)}
+              </Text>
+              {overdue && (
+                <Badge colorPalette="red" variant="subtle">
+                  지남
+                </Badge>
+              )}
+            </HStack>
           </Box>
           <Box>
             <Menu.Root>

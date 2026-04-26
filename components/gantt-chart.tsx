@@ -3,13 +3,7 @@
 import { Box, HStack, Heading } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { GanttRow } from './gantt-row';
-import {
-  addDays,
-  daysBetween,
-  getDateWindow,
-  todayIso,
-  xForDate,
-} from '@/lib/gantt/dates';
+import { addDays, daysBetween, getDateWindow, xForDate } from '@/lib/gantt/dates';
 import { flattenTree } from '@/lib/tasks/tree';
 import type { Task } from '@/lib/db/schema';
 
@@ -21,7 +15,7 @@ const HEADER_WEEK_HEIGHT = 28;
 
 const NO_COLLAPSE = new Set<string>();
 
-type Props = { tasks: Task[] };
+type Props = { tasks: Task[]; today: string };
 
 type MonthSegment = { label: string; xStart: number; widthPx: number };
 
@@ -53,8 +47,7 @@ function buildWeekStarts(windowStart: string, windowDays: number): string[] {
   return starts;
 }
 
-export function GanttChart({ tasks }: Props) {
-  const today = useMemo(() => todayIso(), []);
+export function GanttChart({ tasks, today }: Props) {
   const dateWindow = useMemo(() => getDateWindow(tasks, today), [tasks, today]);
   const flatNodes = useMemo(() => flattenTree(tasks, NO_COLLAPSE), [tasks]);
 
@@ -195,6 +188,7 @@ export function GanttChart({ tasks }: Props) {
                 leftWidth={LEFT_WIDTH}
                 rightWidth={rightWidth}
                 rowHeight={ROW_HEIGHT}
+                today={today}
               />
             ))
           )}
