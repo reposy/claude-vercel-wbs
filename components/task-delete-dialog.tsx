@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert, Button, CloseButton, Dialog, Portal, Stack, Text } from '@chakra-ui/react';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { deleteTask } from '@/lib/actions/tasks';
 import type { Task } from '@/lib/db/schema';
 import type { ValidationError } from '@/lib/validation/task';
@@ -16,6 +16,11 @@ type Props = {
 export function TaskDeleteDialog({ task, childCount, open, onOpenChange }: Props) {
   const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<ValidationError[]>([]);
+
+  useEffect(() => {
+    if (open) setErrors([]);
+  }, [open]);
+
   const message =
     childCount > 0
       ? `이 작업과 하위 작업 ${childCount}개가 모두 삭제됩니다. 계속할까요?`

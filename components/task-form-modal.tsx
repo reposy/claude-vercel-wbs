@@ -12,7 +12,7 @@ import {
   Stack,
   Textarea,
 } from '@chakra-ui/react';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { createTask, updateTask } from '@/lib/actions/tasks';
 import { validateTaskInput, type TaskInput, type ValidationError } from '@/lib/validation/task';
 import type { Task } from '@/lib/db/schema';
@@ -34,6 +34,23 @@ export function TaskFormModal({ open, onOpenChange, task }: Props) {
   const [dueDate, setDueDate] = useState(task?.dueDate ?? '');
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [isPending, startTransition] = useTransition();
+
+  // open이 false→true로 갈 때 폼 상태를 task prop으로 reset.
+  // Why: Dialog.Root는 항상 mount된 상태로 두어야 Chakra가 body의 scroll-lock cleanup을 정상 실행함
+  // (조건부 mount는 cleanup useEffect 우회 → body에 pointer-events:none 영구 잔류 → 행 클릭 죽음).
+  useEffect(() => {
+    if (!open) return;
+    setTitle(task?.title ?? '');
+    setDescription(task?.description ?? '');
+    setAssignee(task?.assignee ?? '');
+    setStatus(task?.status ?? 'todo');
+    setProgress(String(task?.progress ?? 0));
+    setStartDate(task?.startDate ?? '');
+    setDueDate(task?.dueDate ?? '');
+    setErrors([]);
+    // task 객체는 row마다 안정적이라 deps에 넣어도 됨. open 전이만으로 reset 충분.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const errorOf = (field: ValidationError['field']) => errors.find((e) => e.field === field)?.message;
 

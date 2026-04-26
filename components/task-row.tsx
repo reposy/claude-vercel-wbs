@@ -98,17 +98,15 @@ export function TaskRow({ task, childCount }: Props) {
         </HStack>
       </Box>
 
-      {editOpen && (
-        <TaskFormModal task={task} open={editOpen} onOpenChange={setEditOpen} />
-      )}
-      {deleteOpen && (
-        <TaskDeleteDialog
-          task={task}
-          childCount={childCount}
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
-        />
-      )}
+      {/* Dialog는 항상 mount — open prop으로 visibility 제어. 조건부 mount 시
+          Chakra v3 Dialog의 body scroll-lock cleanup이 우회되어 pointer-events:none이 영구 잔류함. */}
+      <TaskFormModal task={task} open={editOpen} onOpenChange={setEditOpen} />
+      <TaskDeleteDialog
+        task={task}
+        childCount={childCount}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </>
   );
 }

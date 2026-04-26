@@ -38,7 +38,8 @@ export function TaskList({ tasks, childCounts }: Props) {
         </Stack>
       )}
 
-      {createOpen && <TaskFormModal open={createOpen} onOpenChange={setCreateOpen} />}
+      <TaskFormModal open={createOpen} onOpenChange={setCreateOpen} />
+
     </Box>
   );
 }
