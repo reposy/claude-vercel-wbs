@@ -16,5 +16,9 @@
       "type": "http",
       "url": "http://localhost:3000/api/mcp"
     }
+    ,"wbs-prod": {
+      "type": "http",
+      "url": "https://claude-vercel-wbs-hsykys0728-3295s-projects.vercel.app/api/mcp"
+    }
   }
 }
