@@ -357,6 +357,22 @@ vercel --prod
 
 ---
 
+## MCP로 호출하기
+
+이 앱은 `/api/mcp` 엔드포인트로 Streamable HTTP MCP 서버를 노출합니다. 5개 tool을 통해 Task CRUD를 외부 클라이언트(Claude Desktop, MCP Inspector 등)에서 호출할 수 있습니다.
+
+| Tool | 설명 |
+|---|---|
+| `list_tasks` | 전체 작업 조회 |
+| `get_task` | id로 단일 작업 조회 |
+| `create_task` | 새 작업 생성 (`title` 필수, 나머지 선택) |
+| `update_task` | 부분 업데이트 (`id` 필수, 나머지 선택). `progress=100`은 `status=done`을 강제 |
+| `delete_task` | id로 작업 삭제 (자식은 cascade) |
+
+활성화하려면 환경변수 `MCP_PUBLIC_ENABLED=1` 을 설정한 뒤 `npm run dev`로 띄우고, `.mcp.json`의 `wbs-local` 항목을 통해 Claude Code에 연결합니다. 인-메모리 검증은 `npx tsx scripts/verify-mcp.ts` 로 실행할 수 있습니다.
+
+---
+
 ## 라이선스
 
 교육 과제용 템플릿 — 자유롭게 복제·변경해서 사용하세요.
